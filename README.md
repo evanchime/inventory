@@ -4,7 +4,7 @@ This is a Python project for managing inventory. It allows users to keep track o
 
 ## Installation
 
-1. Clone the repository: `git clone https://github.com/your-username/inventory.git`
+1. Clone the repository: `git clone https://github.com/evanchime/inventory.git`
 2. Navigate to the project directory: `cd inventory`
 3. Install the required dependencies: `pip install tabulate`
 
