@@ -6,9 +6,9 @@ This is a Python project for managing inventory. It allows users to keep track o
 
 1. Clone the repository: `git clone https://github.com/evanchime/inventory.git`
 2. Navigate to the project directory: `cd inventory`
-3. Create a virtual enviroment: 
-`python3 -m venv venv
-source venv/bin/activate`  # On Windows, use `venv\Scripts\activate`
+3. Create a virtual enviroment: `python3 -m venv venv` 
+   - On Unix-based systems (Linux/macOS): `source venv/bin/activate`
+   - On Windows: `venv\Scripts\activate`
 4. Install the required dependencies: `pip install -r requirements.txt`
 
 ## Usage
