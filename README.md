@@ -2,16 +2,25 @@
 
 This is a Python project for managing inventory. It allows users to keep track of shoes, their quantities, and other relevant information.
 
-## Installation
+## Installation (Running Directly on Your Localhost)
 
 1. Clone the repository: `git clone https://github.com/evanchime/inventory.git`
 2. Navigate to the project directory: `cd inventory`
-3. Install the required dependencies: `pip install tabulate`
+3. Create a virtual enviroment: `python3 -m venv venv` 
+   - On Unix-based systems (Linux/macOS): `source venv/bin/activate`
+   - On Windows: `venv\Scripts\activate`
+4. Install the required dependencies: `pip install -r requirements.txt`
 
 ## Usage
 
-1. Run the main script: `python main.py`
-2. Follow the on-screen instructions to interact with the inventory system.
+1. Running Directly on Your Localhost
+   - Run the main script: `python3 inventory.py`
+   - Follow the on-screen instructions to interact with the inventory system.
+
+2. Running on Docker Container
+   - On Unix-based systems (Linux/macOS): `sudo docker run -i evanchime/inventory-app:v1.0`
+   - On Windows (Ensure you have elevated privileges): `docker run -i evanchime/inventory-app:v1.0`
+   - Follow the on-screen instructions to interact with the inventory system.
 
 ## Features
 
