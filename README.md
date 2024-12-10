@@ -13,8 +13,14 @@ This is a Python project for managing inventory. It allows users to keep track o
 
 ## Usage
 
-1. Run the main script: `python main.py`
-2. Follow the on-screen instructions to interact with the inventory system.
+1. Running Directly on Your Localhost
+   - Run the main script: `python3 inventory.py`
+   - Follow the on-screen instructions to interact with the inventory system.
+
+2. Running on Docker Container
+   - On Unix-based systems (Linux/macOS): `sudo docker run -i evanchime/inventory-app:v1.0`
+   - On Windows (Ensure you have elevated privileges): `docker run -i evanchime/inventory-app:v1.0`
+   - Follow the on-screen instructions to interact with the inventory system.
 
 ## Features
 
