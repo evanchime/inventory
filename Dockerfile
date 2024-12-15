@@ -10,6 +10,5 @@ COPY . /app
 # Install dependencies
 RUN pip install -r requirements.txt
 
-# Run the specified command within the container
-CMD ["python3", "inventory.py"]
-
+# The main executable
+ENTRYPOINT ["python3", "inventory.py"]
