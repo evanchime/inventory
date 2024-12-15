@@ -1,5 +1,7 @@
 import re  # Import regular expression module
 from tabulate import tabulate # Import tabulate module
+import os
+import sys
 
 #========The beginning of the class==========
 class Shoe:
@@ -53,27 +55,32 @@ shoe_list = []
 #==========Functions outside the class==============
 def read_shoes_data():
     '''
-    This function will open the file inventory.txt
-    and read the data from this file, then create a shoes object with 
-    this data and append this object into the shoes list. One line in 
-    this file represents data to create one object of shoes. You must 
-    use the try-except in this function for error handling. Remember to 
-    skip the first line using your code.
+    This function will open the inventory file supplied as a command 
+    line argument and read the data from this file, then create a shoes 
+    object with this data and append this object into the shoes list. 
+    One line in this file represents data to create one object of shoes. 
+    You must use the try-except in this function for error handling. 
+    Remember to skip the first line using your code. The file must be a 
+    csv file, with the first line thus: 
+    'Country,Code,Product,Cost,Quantity' and all subsequent lines should 
+    contain the data values in the same order as the first line.
     '''
-    print("\nReading data from 'inventory.txt' file...", end='')
+    print(f"\nReading data from '{inventory_file}' file...", end='')
     try:
-        with open("inventory.txt", "r") as file:
-            # Skip first line. Strip off newline and split into Shoe
-            # attributes list. Then unpack the list into a Shoe object
-            # and append to the Shoe list
+        with open(inventory_file, "r") as file:
             for line_index, line in enumerate(file):
                 if line_index == 0:
-                    continue
-                line = line.strip('\n').split(',')
-                shoe_list.append(Shoe(*line))
+                    continue  # Skip the header line
+                elif not line.strip():
+                    continue  # Skip empty lines
+                else:
+                    # Strip off newline and split into Shoe attributes
+                    line = line.strip('\n').split(',')
+                    # Add shoe to the shoe list
+                    shoe_list.append(Shoe(*line))
             print("Done")  # Done reading data
     except FileNotFoundError:
-        raise FileNotFoundError("No such file or directory: 'inventory.txt'")
+        raise FileNotFoundError(f"No such file or directory: '{inventory_file}'")
 
 def capture_shoes():
     '''
@@ -105,9 +112,10 @@ def capture_shoes():
     except ValueError:
         raise ValueError("Enter a valid number for quantity")
 
-    # Add shoe to inventory
+    # Clean file end, then add shoe to inventory
+    clean_end_of_file(inventory_file)
     shoe_list.append(Shoe(country, code, product, cost, quantity))
-    with open("inventory.txt", "a") as file:
+    with open(inventory_file, "a") as file:
         file.write(f"\n{country},{code},{product},{cost},{quantity}")
 
     print("\nShoe successfully added to inventory")
@@ -175,7 +183,7 @@ def re_stock():
         
     # Write the updated quantity to the file
     if add_quantity == 'y':
-        with open("inventory.txt", "w") as file:
+        with open(inventory_file, "w") as file:
             # Write the header
             file.write("Country,Code,Product,Cost,Quantity\n")
             for index, shoe in enumerate(shoe_list):
@@ -255,16 +263,44 @@ def utility_func():
     if not shoe_list:
         read_shoes_data()
 
+
+def clean_end_of_file(inventory_file):
+    '''Clean the File End. Remove any trailing newline or carriage 
+    return characters.
+    '''
+    with open(inventory_file, 'r+') as file: 
+        file.seek(0, os.SEEK_END)
+        pos = file.tell()
+        while pos > 0:
+            file.seek(pos - 1, os.SEEK_SET)
+            if file.read(1) not in ('\n', '\r'):
+                break
+            pos -= 1
+        file.truncate(pos)
+
 #==========Main Menu=============
 '''
 Create a menu that executes each function above.
-This menu should be inside the while loop. Be creative!
 '''
+# Check if the user has provided the inventory file
+if len(sys.argv) != 2:
+    print(
+        "An error occurred: Not enough arguments provided. " 
+        "Usage: python3 script_name.py inventory_file "
+    )
+    sys.exit(1)
+
+# Check if the inventory file exists
+inventory_file = sys.argv[1] 
+if not os.path.isfile(inventory_file): 
+    print(f"Error: No such file or directory: '{inventory_file}'") 
+    sys.exit(1)
 
 while True:
+
     # Present the menu to the user
     menu = input('''\nSelect one of the following options:\n
-rd - read 'inventory.txt' file and populate shoe list
+rd - read inventory file and populate shoe list
 cs - Add a shoe to the shoe list
 va - view all shoes
 rs - re-stock shoe with the lowest quantity
