@@ -147,7 +147,9 @@ def re_stock(inventory_file):
     This quantity should be updated on the file for this shoe.
     '''
     # The first quantity will always be the first lowest
-    lowest_quantity = float('inf') 
+    lowest_quantity = float('inf')
+
+    update_quantity = False  # If True, update quantity 
 
     # Dictionary to store shoes with the lowest quantity and their index
     lowest_stock = {}
@@ -169,18 +171,19 @@ def re_stock(inventory_file):
         ).strip().lower()  # User can enter option in any case
 
         if add_quantity == 'y':
+            update_quantity = True
             # Update the quantity of the shoe
             quantity = int(input("\nEnter the quantity: ").strip())
             shoe.quantity += quantity
             # Update the quantity of the shoe in the shoe list
             shoe_list[index] = shoe
         elif add_quantity == 'n':
-            print("\nQuantity not updated")
+            pass
         else:
             raise ValueError("Invalid input. Enter 'y' or 'n'")
         
     # Write the updated quantity to the file
-    if add_quantity == 'y':
+    if update_quantity:
         with open(inventory_file, "w") as file:
             # Write the header
             file.write("Country,Code,Product,Cost,Quantity\n")
@@ -192,7 +195,9 @@ def re_stock(inventory_file):
                 # Do not write a newline character after the last line
                 if index != len(shoe_list) - 1:
                     file.write('\n')
-        print("\nQuantity updated successfully")
+        print("\nStock updated successfully")
+    else:
+        print("\nStock not updated")
 
 def search_shoe():
     '''
