@@ -53,7 +53,7 @@ The list will be used to store a list of objects of shoes.
 '''
 shoe_list = []
 #==========Functions outside the class==============
-def read_shoes_data():
+def read_shoes_data(inventory_file):
     '''
     This function will open the inventory file supplied as a command 
     line argument and read the data from this file, then create a shoes 
@@ -80,9 +80,11 @@ def read_shoes_data():
                     shoe_list.append(Shoe(*line))
             print("Done")  # Done reading data
     except FileNotFoundError:
-        raise FileNotFoundError(f"No such file or directory: '{inventory_file}'")
+        raise FileNotFoundError(
+            f"No such file or directory: '{inventory_file}'"
+        )
 
-def capture_shoes():
+def capture_shoes(inventory_file):
     '''
     This function will allow a user to capture data
     about a shoe and use this data to create a shoe object
@@ -97,11 +99,7 @@ def capture_shoes():
     if not re.fullmatch(r"[a-zA-Z ]+", country):
         raise ValueError("Enter a valid country name")
     country = re.sub(r" +", " ", country)
-    code = input("Enter the code: ").strip().upper()
-    if not code.isalnum():  # e.g. ABC123
-        raise ValueError(
-            "Enter a valid code. No special characters. E.g. 'ABC123'"
-        )
+    code = get_valid_code()
     product = input("Enter the product: ").strip().title()
     try:
         cost = int(input("Enter the cost: ").strip())
@@ -141,7 +139,7 @@ def view_all():
 
     print(tabulate(table, headers, tablefmt="pretty"))
 
-def re_stock():
+def re_stock(inventory_file):
     '''
     This function will find the shoe object with the lowest quantity,
     which is the shoes that need to be re-stocked. Ask the user if they
@@ -166,8 +164,8 @@ def re_stock():
     for index, shoe in lowest_stock.items():
         # Ask the user if they want to add this quantity of shoes
         add_quantity = input(
-            f"\nDo you want to add to the quantity of \n{shoe}\nin stock? \
-(y/n): "
+            f"\nDo you want to add to the quantity of \n{shoe}\nin stock?"
+            f"(y/n): "
         ).strip().lower()  # User can enter option in any case
 
         if add_quantity == 'y':
@@ -188,8 +186,8 @@ def re_stock():
             file.write("Country,Code,Product,Cost,Quantity\n")
             for index, shoe in enumerate(shoe_list):
                 file.write(
-                    f"{shoe.country},{shoe.code},{shoe.product},{shoe.cost},\
-{shoe.quantity}"
+                    f"{shoe.country},{shoe.code},{shoe.product},"
+                    f"{shoe.cost},{shoe.quantity}"
                 )
                 # Do not write a newline character after the last line
                 if index != len(shoe_list) - 1:
@@ -258,10 +256,10 @@ def highest_qty():
     for shoe in highest_stock:
         print(shoe, '\n')
 
-def utility_func():
+def utility_func(inventory_file):
     '''Call read_shoes_data() if it has not been called before'''
     if not shoe_list:
-        read_shoes_data()
+        read_shoes_data(inventory_file)
 
 
 def clean_end_of_file(inventory_file):
@@ -278,70 +276,122 @@ def clean_end_of_file(inventory_file):
             pos -= 1
         file.truncate(pos)
 
+
+def get_valid_code():
+    '''Get a valid code from the user. The code should be unique in the
+    shoe list and contain only letters and numbers. The user has 3
+    attempts to enter a valid code.
+    '''
+    num_of_attempts = 0  # Number of attempts at entering the valid code
+
+    while True:
+        code_exists = False
+        code = input(
+            "Enter the code. It should contain letters and numbers only: "
+        ).strip().upper()
+
+        # Check if the code already exists in the shoe list
+        for shoe in shoe_list:
+            if shoe.code == code:
+                code_exists = True
+                break
+
+        # Increment the number of attempts
+        num_of_attempts += 1
+
+        # Validate the code
+        if not code.isalnum():
+            if num_of_attempts == 3:
+                raise ValueError(
+                    "Aborting...code must contain only letters and numbers"
+                )
+            else:
+                print(
+                    "\nInvalid code. Code must contain only letters "
+                    "and numbers. Please try again.\n"
+                )
+        elif code_exists:
+            if num_of_attempts == 3:
+                raise ValueError(
+                    "Aborting...shoe with that code already exists"
+                )
+            else:
+                print(
+                    "\nShoe with that code already exists. Please try again.\n"
+                )
+        else:
+            # Code is valid and unique
+            return code
+
+
 #==========Main Menu=============
 '''
 Create a menu that executes each function above.
 '''
-# Check if the user has provided the inventory file
-if len(sys.argv) != 2:
-    print(
-        "An error occurred: Not enough arguments provided. " 
-        "Usage: python3 script_name.py inventory_file "
-    )
-    sys.exit(1)
+def main():
+    # Check if the user has provided the inventory file
+    if len(sys.argv) != 2:
+        print(
+            "An error occurred: Not enough arguments provided. " 
+            "Usage: python3 script_name.py inventory_file "
+        )
+        sys.exit(1)
 
-# Check if the inventory file exists
-inventory_file = sys.argv[1] 
-if not os.path.isfile(inventory_file): 
-    print(f"Error: No such file or directory: '{inventory_file}'") 
-    sys.exit(1)
+    # Check if the inventory file exists
+    inventory_file = sys.argv[1] 
+    if not os.path.isfile(inventory_file): 
+        print(f"Error: No such file or directory: '{inventory_file}'") 
+        sys.exit(1)
 
-while True:
+    while True:
 
-    # Present the menu to the user
-    menu = input('''\nSelect one of the following options:\n
-rd - read inventory file and populate shoe list
-cs - Add a shoe to the shoe list
-va - view all shoes
-rs - re-stock shoe with the lowest quantity
-se - search for a shoe from the shoe list
-tv - calculate the total value for each shoe
-os - show shoe(s) on sale
-e - exit\n
-: ''').strip().lower()  # User can enter option in any case
+        # Present the menu to the user
+        menu = input('''\nSelect one of the following options:\n
+    rd - read inventory file and populate shoe list
+    cs - Add a shoe to the shoe list
+    va - view all shoes
+    rs - re-stock shoe with the lowest quantity
+    se - search for a shoe from the shoe list
+    tv - calculate the total value for each shoe
+    os - show shoe(s) on sale
+    e - exit\n
+    : ''').strip().lower()  # User can enter option in any case
 
-    try:
-        if menu == "rd":
-            utility_func()
-            user_input = input("\nPress enter to return to the main menu: ")
-        elif menu == "cs":
-            utility_func()
-            capture_shoes()
-            user_input = input("\nPress enter to return to the main menu: ")
-        elif menu == "va":
-            utility_func()
-            view_all()
-            user_input = input("\nPress enter to return to the main menu: ")
-        elif menu == "rs":
-            utility_func()
-            re_stock()
-            user_input = input("\nPress enter to return to the main menu: ")
-        elif menu == "se":
-            utility_func()
-            search_shoe()
-            user_input = input("\nPress enter to return to the main menu: ")
-        elif menu == "tv":
-            utility_func()
-            value_per_item()
-            user_input = input("\nPress enter to return to the main menu: ")
-        elif menu == "os":
-            utility_func()
-            highest_qty()
-            user_input = input("\nPress enter to return to the main menu: ")
-        elif menu == 'e':
-            print("\nGoodbye...\n")
-            exit()
-        else:
-            raise ValueError("Invalid input. Try again.")
-    except Exception as e:
-        print(f"\nError: {e}")
+        try:
+            if menu == "rd":
+                utility_func(inventory_file)
+                input("\nPress enter to return to the main menu: ")
+            elif menu == "cs":
+                utility_func(inventory_file)
+                capture_shoes(inventory_file)
+                input("\nPress enter to return to the main menu: ")
+            elif menu == "va":
+                utility_func(inventory_file)
+                view_all()
+                input("\nPress enter to return to the main menu: ")
+            elif menu == "rs":
+                utility_func(inventory_file)
+                re_stock(inventory_file)
+                input("\nPress enter to return to the main menu: ")
+            elif menu == "se":
+                utility_func(inventory_file)
+                search_shoe()
+                input("\nPress enter to return to the main menu: ")
+            elif menu == "tv":
+                utility_func(inventory_file)
+                value_per_item()
+                input("\nPress enter to return to the main menu: ")
+            elif menu == "os":
+                utility_func(inventory_file)
+                highest_qty()
+                input("\nPress enter to return to the main menu: ")
+            elif menu == 'e':
+                print("\nGoodbye...\n")
+                exit()
+            else:
+                raise ValueError("Invalid input. Try again.")
+        except Exception as e:
+            print(f"\nError: {e}")
+
+if __name__ == "__main__":
+    main()
