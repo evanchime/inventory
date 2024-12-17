@@ -14,12 +14,12 @@ This is a Python project for managing inventory. It allows users to keep track o
 ## Usage
 
 1. Running Directly on Your Localhost
-   - Run the main script: `python3 inventory.py your_inventory_file.csv`
+   - Run the main script: `python3 inventory.py your_inventory_file`
    - Follow the on-screen instructions to interact with the inventory system.
 
 2. Running on Docker Container
-   - On Unix-based systems (Linux/macOS): `sudo docker run -i -v path_to_your_inventory_file:/data evanchime/inventory-app /data/your_inventory_file.csv`
-   - On Windows (Ensure you have elevated privileges): `docker run -i -v path_to_your_inventory_file:/data evanchime/inventory-app /data/your_inventory_file.csv`
+   - On Unix-based systems (Linux/macOS. Ensure you've root priviledges): `docker run -i -v path_to_your_inventory_file:/data evanchime/inventory-app /data/your_inventory_file`
+   - On Windows (Ensure you've admin privileges): `docker run -i -v path_to_your_inventory_file:/data evanchime/inventory-app /data/your_inventory_file`
    - Follow the on-screen instructions to interact with the inventory system.
 
 Don't forget to replace path_to_your_inventory_file and your_inventory_file accordingly
